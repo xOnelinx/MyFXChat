@@ -11,7 +11,7 @@ import java.util.Vector;
  */
 public class Server {
 
-    ServerSocket serv;
+    private ServerSocket serv;
     private Vector<ClientHandler> clients;
     private AuthServise authServise;
 
@@ -49,7 +49,7 @@ public class Server {
 
     }
 
-    public synchronized void sebdMsgToClient (ClientHandler from, String nickTo , String msg){
+    public synchronized void sendMsgToClient(ClientHandler from, String nickTo , String msg){
         from.sendMsg("to " + nickTo + " :" + msg);
         for (ClientHandler o: clients){
             if (o.getName().equals(nickTo)){
@@ -66,6 +66,14 @@ public class Server {
         }
         return false;
     }
+    public synchronized void brodcastClientsList (){
+        StringBuilder sb = new StringBuilder("/clients");
+        for (ClientHandler o:clients) {
+            sb.append(o.getName() + " ");
+        }
+        broadcastMsg(sb.toString());
+
+    }
 
     public synchronized void broadcastMsg(String msg){
         for (ClientHandler c:clients
@@ -76,9 +84,11 @@ public class Server {
 
     public synchronized void unsubscribe(ClientHandler o){
         clients.remove(o);
+        brodcastClientsList();
     }
     public synchronized void subscribe(ClientHandler o){
         clients.add(o);
+        brodcastClientsList();
     }
 
 }

@@ -1,7 +1,5 @@
 package Server;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -57,7 +55,7 @@ public class ClientHandler {
                                 String[] tokens = str.split("\\s");
                                 String nick = tokens[1];
                                 String msg = str.substring(4 + nick.length());
-                                server.sebdMsgToClient(this,nick,msg);
+                                server.sendMsgToClient(this,nick,msg);
                             }
                         }else {
                             server.broadcastMsg(name + " :" + str);

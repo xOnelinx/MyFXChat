@@ -1,12 +1,11 @@
 package sample;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
@@ -25,6 +24,8 @@ public class Controller implements Initializable{
     @FXML
     public TextField textField;
 
+    public ListView clientList;
+
     public TextField loginField;
     public PasswordField passField;
 
@@ -32,6 +33,7 @@ public class Controller implements Initializable{
     public AnchorPane bottomPanel;
 
     private boolean authorized;
+
 
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
@@ -77,10 +79,23 @@ public class Controller implements Initializable{
                     //цикл беседы
                     while (true){
                         String str = in.readUTF();
-                        if (str.equals("/end")){
+                        if (str.startsWith("/")){
+                            if (str.equals("/end")){
                             break;
+                            }
+                            if (str.startsWith("/clients")){
+                                String[] s = str.split(" ");
+                                Platform.runLater(() -> {
+                                        for (int i = 1; i <s.length ; i++) {
+                                            clientList.getItems().add(s[i]);
+                                        }
+                                    }
+                                );
+                            }
+                        }else {
+                            textArea.appendText(str + "\n");
+
                         }
-                        textArea.appendText(str+"\n");
                     }
                 }catch(IOException e){
                     e.printStackTrace();
@@ -124,7 +139,10 @@ public class Controller implements Initializable{
             passField.clear();
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+            textField.requestFocus();
         }
+
     }
 
     public void showAlert(String msg){
