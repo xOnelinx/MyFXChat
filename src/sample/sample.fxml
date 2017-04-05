@@ -20,8 +20,8 @@
       </HBox>
       <AnchorPane prefHeight="404.0" prefWidth="600.0">
          <children>
-            <TextArea fx:id="textArea" editable="false" layoutX="105.0" prefHeight="156.0" prefWidth="295.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="20.0" />
-            <ListView fx:id="clientList" layoutX="460.0" layoutY="20.0" prefHeight="200.0" prefWidth="104.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="36.0" AnchorPane.topAnchor="20.0" />
+            <TextArea fx:id="textArea" editable="false" layoutX="105.0"  prefHeight="156.0" prefWidth="295.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="20.0" />
+            <ListView fx:id="clientList" layoutX="460.0" layoutY="20.0" onMouseClicked="#listClick" prefHeight="200.0" prefWidth="104.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="36.0" AnchorPane.topAnchor="20.0" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="bottomPanel" prefHeight="46.0" prefWidth="600.0">

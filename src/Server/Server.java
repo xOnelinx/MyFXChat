@@ -1,8 +1,10 @@
 package Server;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Calendar;
 import java.util.Vector;
 
 
@@ -14,7 +16,7 @@ public class Server {
     private ServerSocket serv;
     private Vector<ClientHandler> clients;
     private AuthServise authServise;
-
+    private PrintWriter out;
     public AuthServise getAuthServise() {
         return authServise;
     }
@@ -23,6 +25,7 @@ public class Server {
 
     public Server() {
         try  {
+            out = new PrintWriter("localHistory.txt");
             serv = new ServerSocket(PORT);
             Socket socket = null;
             authServise = new DBAuthService();
@@ -41,6 +44,7 @@ public class Server {
         }finally {
             try {
                 serv.close();
+                out.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -67,7 +71,7 @@ public class Server {
         return false;
     }
     public synchronized void brodcastClientsList (){
-        StringBuilder sb = new StringBuilder("/clients");
+        StringBuilder sb = new StringBuilder("/clients ");
         for (ClientHandler o:clients) {
             sb.append(o.getName() + " ");
         }
@@ -80,6 +84,11 @@ public class Server {
              ) {
             c.sendMsg(msg);
         }
+    }
+
+    public void hist(String msg){
+        out.println(Calendar.getInstance().getTime().toString() +" "+ msg);
+        out.flush();
     }
 
     public synchronized void unsubscribe(ClientHandler o){

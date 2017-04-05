@@ -3,9 +3,11 @@ package sample;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
@@ -42,12 +44,17 @@ public class Controller implements Initializable{
             upperPanel.setVisible(true);
             bottomPanel.setManaged(false);
             bottomPanel.setVisible(false);
+            clientList.setManaged(false);
+            clientList.setVisible(false);
         } else {
             upperPanel.setManaged(false);
             upperPanel.setVisible(false);
             bottomPanel.setManaged(true);
             bottomPanel.setVisible(true);
+            clientList.setManaged(true);
+            clientList.setVisible(true);
             textArea.clear();
+            Platform.runLater(() -> textField.requestFocus());
         }
 
     }
@@ -65,6 +72,8 @@ public class Controller implements Initializable{
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
             setAuthorized(false);
+
+
             Thread t = new Thread(()->{
                 try{
                     //цикл авторизации
@@ -83,7 +92,7 @@ public class Controller implements Initializable{
                             if (str.equals("/end")){
                             break;
                             }
-                            if (str.startsWith("/clients")){
+                            if (str.startsWith("/clients ")){
                                 String[] s = str.split(" ");
                                 Platform.runLater(() -> {
                                         for (int i = 1; i <s.length ; i++) {
@@ -157,6 +166,13 @@ public class Controller implements Initializable{
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+    public void listClick (MouseEvent mouseEvent){
+        if (mouseEvent.getClickCount()==2){
+            textField.setText("/w "
+            + clientList.getSelectionModel().getSelectedItem().toString() +" ");
+            textField.requestFocus();
         }
     }
 }

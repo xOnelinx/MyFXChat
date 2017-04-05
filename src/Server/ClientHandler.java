@@ -48,6 +48,7 @@ public class ClientHandler {
                     while (true) {
 
                         String str = in.readUTF();
+                        server.hist(name+ ": "+str);
                         System.out.println("from client: " + str);
                         if (str.startsWith("/")) {
                             if (str.equals("/end")) break;
