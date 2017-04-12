@@ -35,7 +35,7 @@ public class Controller implements Initializable{
     public AnchorPane bottomPanel;
 
     private boolean authorized;
-
+    private String myNick = "";
 
     public void setAuthorized(boolean authorized) {
         this.authorized = authorized;
@@ -65,13 +65,19 @@ public class Controller implements Initializable{
     private DataOutputStream out;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources) { setAuthorized(false);
 
+
+
+    }
+
+    void start() {
         try {
+            setAuthorized(false);
             socket = new Socket("localhost", 8187);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            setAuthorized(false);
+
 
 
             Thread t = new Thread(()->{
@@ -80,7 +86,9 @@ public class Controller implements Initializable{
                     while (true){
                         String str = in.readUTF();
                         if (str.startsWith("/authok")){
-                           setAuthorized(true);
+                            setAuthorized(true);
+                            myNick = str.split("\\s")[1];
+                            Platform.runLater(() -> Main.mainStage.setTitle("JavaFX Client: " + myNick));
                             break;
                         }
                         textArea.appendText(str + "\n");
@@ -95,15 +103,18 @@ public class Controller implements Initializable{
                             if (str.startsWith("/clients ")){
                                 String[] s = str.split(" ");
                                 Platform.runLater(() -> {
+                                    clientList.getItems().clear();
                                         for (int i = 1; i <s.length ; i++) {
                                             clientList.getItems().add(s[i]);
                                         }
                                     }
                                 );
                             }
+                            if (str.startsWith("/yournickis ")){
+                                myNick = str.split(" ")[1];
+                            }
                         }else {
-                            textArea.appendText(str + "\n");
-
+                           textArea.appendText(str + "\n");
                         }
                     }
                 }catch(IOException e){
@@ -118,17 +129,20 @@ public class Controller implements Initializable{
                 }
 
             });
-       //     t.setDaemon(true);
             t.start();
         } catch (IOException e){
             showAlert("Не удалось подключится к серверу");
             Platform.exit();
         }
-
     }
 
     public void onSendMsg(){
         try {
+            if (textField.getText().equals("/help")){
+                textArea.appendText("HELP:\n\\w - шепнуть\\changenick - сменить имя\\" +
+                        "\\end - выйти");
+                return;
+            }
             out.writeUTF(textField.getText());
             if (textField.getText().equals("/ebd")){
                 socket.close();
@@ -142,7 +156,10 @@ public class Controller implements Initializable{
     }
     //TODO че за авторизация???
     public void onAuthClick() {
+        if (socket == null || socket.isClosed())
+            start();
         try {
+
             out.writeUTF("/auth "+ loginField.getText() + " " + passField.getText());
             loginField.clear();
             passField.clear();
@@ -170,9 +187,13 @@ public class Controller implements Initializable{
     }
     public void listClick (MouseEvent mouseEvent){
         if (mouseEvent.getClickCount()==2){
-            textField.setText("/w "
-            + clientList.getSelectionModel().getSelectedItem().toString() +" ");
-            textField.requestFocus();
+            if (clientList.getSelectionModel().getSelectedItem().toString().equals(myNick)){
+                textField.setText("/changenick ");
+            }else {
+                textField.setText("/w "
+                        + clientList.getSelectionModel().getSelectedItem().toString() + " ");
+                textField.requestFocus();
+            }
         }
     }
 }

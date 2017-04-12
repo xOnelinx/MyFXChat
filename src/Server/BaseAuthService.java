@@ -47,4 +47,18 @@ public class BaseAuthService implements AuthServise {
         }
         return null;
     }
+
+    @Override
+    public boolean chengeNick(ClientHandler c, String newNick) {
+        for (Entry o: entries){
+            if (o.nick.equals(newNick))return false;
+        }
+        for (Entry o:entries){
+            if(o.nick.equals(c.getName())){
+                o.nick = newNick;
+                return true;
+            }
+        }
+        return false;
+    }
 }

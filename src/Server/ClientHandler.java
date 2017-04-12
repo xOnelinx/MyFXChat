@@ -58,6 +58,14 @@ public class ClientHandler {
                                 String msg = str.substring(4 + nick.length());
                                 server.sendMsgToClient(this,nick,msg);
                             }
+                            if (str.startsWith("/changenick ")){
+                                String newNick = str.split(" ")[1];
+                                if (server.getAuthServise().chengeNick(this,newNick)){
+                                    changeNick(newNick);
+                                }else {
+                                    sendMsg("ник занят");
+                                }
+                            }
                         }else {
                             server.broadcastMsg(name + " :" + str);
                         }
@@ -85,5 +93,12 @@ public class ClientHandler {
         }catch (IOException e){
             e.printStackTrace();
         }
+    }
+    public  void changeNick(String newNick){
+        server.broadcastMsg(name + " change " + newNick);
+        name = newNick;
+       sendMsg("/yournickis " + newNick);
+       server.brodcastClientsList();
+
     }
 }

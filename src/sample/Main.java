@@ -9,25 +9,30 @@ import javafx.stage.WindowEvent;
 
 
 public class Main extends Application {
+    public static Stage mainStage;
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader =new FXMLLoader(getClass().getResource("sample.fxml"));
+    public void start(Stage primaryStage) throws Exception {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("sample.fxml"));
         Parent root = loader.load();
         Controller controller = (Controller) loader.getController();
-        Scene scene = new Scene(root,400,400);
-        primaryStage.setTitle("Oracle aweaits");
-        primaryStage.setScene(scene);
+        primaryStage.setTitle("JavaFX Client");
+        primaryStage.setScene(new Scene(root, 500, 500));
         primaryStage.show();
+        mainStage = primaryStage;
+        // primaryStage.setOpacity(0.5);
 
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent event) {
-                controller.closeConnection();
+                try {
+                    controller.closeConnection();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
-
 
     public static void main(String[] args) {
         launch(args);
